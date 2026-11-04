@@ -1,0 +1,16 @@
+---
+Name: dpws-remote-assets
+After:
+  - '#assetscore'
+  - '#requestprocessors'
+Only:
+  envvarset: REMOTE_ASSETS
+  environment: dev
+---
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Assets\Storage\AssetStore:
+    class: Dpws\RemoteAssets\RemoteAssetStore
+  SilverStripe\Control\Director:
+    properties:
+      Middlewares:
+        RemoteAssetsMiddleware: '%$Dpws\RemoteAssets\RemoteAssetsMiddleware'
