@@ -21,18 +21,7 @@ Inspired by [joernroeder/silverstripe-external-assets](https://github.com/joernr
 
 ## Installation
 
-The package is private, so add the repository to your project's `composer.json`:
-
-```json
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "git@github.com:dpezer/silverstripe-remote-assets.git"
-    }
-]
-```
-
-Then install it as a **dev** dependency (never without `--dev`) and flush:
+Install it as a **dev** dependency (never without `--dev`) and flush:
 
 ```sh
 composer require --dev dpezer/silverstripe-remote-assets
