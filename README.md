@@ -4,8 +4,6 @@ Working locally with a copy of the production database but without the asset fil
 This module makes the frontend show images and files from a remote site (production or staging)
 **without downloading or storing them locally**.
 
-Inspired by [joernroeder/silverstripe-external-assets](https://github.com/joernroeder/silverstripe-external-assets) (Silverstripe 3).
-
 > [!WARNING]
 > **Development only.** Install it with `composer require --dev` so it is never installed on
 > staging or production (`composer install --no-dev`).
@@ -80,6 +78,52 @@ Dpws\RemoteAssets\RemoteAssetsMiddleware:
 - **`$Width` / `$Height` return `0`** for remote images, because dimensions are read from the file.
 - **Protected (draft) files** are not supported — they aren't publicly reachable on the remote.
 - Partial caches (`<% cached %>`) may hold old URLs after toggling the variable; flush to clear them.
+
+## Troubleshooting
+
+### `400 Bad Request` for missing files under `/assets/` (Windows / local `*.local` domains)
+
+Not caused by this module — it's how Silverstripe's generated `assets/.htaccess` behaves on some
+local Apache setups. With this module active, missing files use `/_remote-assets/` and don't hit it,
+but you'll still see it while the module is inactive or for other missing files.
+
+On every flush, Silverstripe regenerates `public/assets/.htaccess` with:
+
+```apache
+RewriteRule .* ../index.php [QSA]
+```
+
+The relative `../index.php` works for sites in a subfolder, but on some setups (Windows Apache,
+dynamic or aliased document roots) Apache can't resolve it and answers `400 Bad Request`.
+Sites served from a domain root (e.g. `http://mysite.local`) can use `/index.php` instead.
+
+Fix it on your machine only, without committing anything:
+
+```sh
+# 1. Local template override: copy of the vendor template with /index.php
+mkdir -p app/templates/SilverStripe/Assets/Flysystem
+sed 's#\.\./index\.php#/index.php#' \
+  vendor/silverstripe/assets/templates/SilverStripe/Assets/Flysystem/PublicAssetAdapter_HTAccess.ss \
+  > app/templates/SilverStripe/Assets/Flysystem/PublicAssetAdapter_HTAccess.ss
+
+# 2. Keep the new file out of git (local-only ignore, never committed)
+echo "app/templates/SilverStripe/Assets/Flysystem/PublicAssetAdapter_HTAccess.ss" >> .git/info/exclude
+```
+
+3. Flush (`?flush=1`) — `public/assets/.htaccess` is regenerated with `/index.php`.
+4. If `public/assets/.htaccess` is tracked in your project, hide your local change from git:
+
+   ```sh
+   git update-index --skip-worktree public/assets/.htaccess
+   ```
+
+   To undo later: `git update-index --no-skip-worktree public/assets/.htaccess`.
+
+Notes:
+
+- Re-create the override after upgrading `silverstripe/assets`, so you get its template changes.
+- Use `--skip-worktree`, not `--assume-unchanged`: the latter is only a performance hint and git
+  may reset it.
 
 ## Documentation
 
