@@ -45,6 +45,13 @@ The config block itself (`_config/config.yml`) only loads with `envvarset: REMOT
 
 ## Running tests
 
+Tests aren't shipped with the package (`.gitattributes`), so run them in a clone of the repository.
+No database is needed.
+
 ```sh
-vendor/bin/phpunit vendor/dpezer/silverstripe-remote-assets/tests/php
+git clone https://github.com/dpezer/silverstripe-remote-assets.git
+cd silverstripe-remote-assets
+composer install
+vendor/bin/phpunit   # unit tests
+vendor/bin/phpcs     # PSR-12 code style
 ```

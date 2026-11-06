@@ -1,4 +1,7 @@
 /vendor/
 /composer.lock
+/public/
 /.phpunit.cache/
+/.phpunit.result.cache
+/.idea/
 .DS_Store

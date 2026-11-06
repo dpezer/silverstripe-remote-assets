@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-06
+
+### Fixed
+
+- Unit tests run without a database and regardless of `SS_ENVIRONMENT_TYPE`.
+- Composer `allow-plugins` config so `composer install` works in the module repository.
+- Test instructions in `docs/en/index.md`.
+
 ## [1.0.0] - 2026-11-05
 
 ### Added
@@ -21,5 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Active only in `dev` environments, on the frontend (including CMS preview); inactive in the CMS and CLI.
 - Troubleshooting docs for `400 Bad Request` on missing `/assets/` files on some local Apache setups.
 
-[Unreleased]: https://github.com/dpezer/silverstripe-remote-assets/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/dpezer/silverstripe-remote-assets/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/dpezer/silverstripe-remote-assets/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/dpezer/silverstripe-remote-assets/releases/tag/1.0.0

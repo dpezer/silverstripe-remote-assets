@@ -3,27 +3,47 @@
 namespace Dpws\RemoteAssets\Tests;
 
 use Dpws\RemoteAssets\RemoteAssets;
+use PHPUnit\Framework\TestCase;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Kernel;
 use SilverStripe\Dev\SapphireTest;
 
-class RemoteAssetsTest extends SapphireTest
+/**
+ * Plain PHPUnit test so no database is needed (SapphireTest always clears a temp database on teardown).
+ */
+class RemoteAssetsTest extends TestCase
 {
-    protected $usesDatabase = false;
-
     private ?string $originalEnv = null;
+
+    private ?string $originalEnvironment = null;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        // Boot the Silverstripe kernel (config, injector) without a database
+        SapphireTest::start();
+    }
 
     protected function setUp(): void
     {
         parent::setUp();
+        Config::nest();
         $this->originalEnv = Environment::getEnv(RemoteAssets::ENV_VAR) ?: null;
+
+        // The module only runs in dev; phpunit usually boots as live
+        $kernel = Injector::inst()->get(Kernel::class);
+        $this->originalEnvironment = $kernel->getEnvironment();
+        $kernel->setEnvironment(Kernel::DEV);
     }
 
     protected function tearDown(): void
     {
         Environment::setEnv(RemoteAssets::ENV_VAR, $this->originalEnv ?? '');
+        Injector::inst()->get(Kernel::class)->setEnvironment($this->originalEnvironment);
+        Config::unnest();
         parent::tearDown();
     }
 
@@ -84,17 +104,12 @@ class RemoteAssetsTest extends SapphireTest
     {
         Environment::setEnv(RemoteAssets::ENV_VAR, 'https://example.com');
         $kernel = Injector::inst()->get(Kernel::class);
-        $originalEnvironment = $kernel->getEnvironment();
 
-        try {
-            $kernel->setEnvironment(Kernel::LIVE);
-            $this->assertFalse(RemoteAssets::isEnabled());
+        $kernel->setEnvironment(Kernel::LIVE);
+        $this->assertFalse(RemoteAssets::isEnabled());
 
-            $kernel->setEnvironment(Kernel::TEST);
-            $this->assertFalse(RemoteAssets::isEnabled());
-        } finally {
-            $kernel->setEnvironment($originalEnvironment);
-        }
+        $kernel->setEnvironment(Kernel::TEST);
+        $this->assertFalse(RemoteAssets::isEnabled());
     }
 
     public function testInactiveInCli(): void
