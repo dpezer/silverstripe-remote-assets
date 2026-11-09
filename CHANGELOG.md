@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-09
+
+### Added
+
+- Silverstripe CMS 5 support (`silverstripe/framework` ^5, `silverstripe/assets` ^2).
+
+### Changed
+
+- Minimum PHP version lowered to 8.1.
+
 ## [1.0.1] - 2026-11-06
 
 ### Fixed
@@ -29,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Active only in `dev` environments, on the frontend (including CMS preview); inactive in the CMS and CLI.
 - Troubleshooting docs for `400 Bad Request` on missing `/assets/` files on some local Apache setups.
 
-[Unreleased]: https://github.com/dpezer/silverstripe-remote-assets/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/dpezer/silverstripe-remote-assets/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/dpezer/silverstripe-remote-assets/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/dpezer/silverstripe-remote-assets/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/dpezer/silverstripe-remote-assets/releases/tag/1.0.0

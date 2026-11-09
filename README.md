@@ -14,8 +14,8 @@ This module makes the frontend show images and files from a remote site (product
 
 ## Requirements
 
-- PHP ^8.3
-- Silverstripe CMS ^6 (`silverstripe/framework` ^6, `silverstripe/assets` ^3)
+- PHP ^8.1
+- Silverstripe CMS ^5 or ^6 (`silverstripe/framework` ^5 || ^6, `silverstripe/assets` ^2 || ^3)
 
 ## Installation
 
