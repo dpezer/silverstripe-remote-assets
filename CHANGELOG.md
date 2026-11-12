@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `RemoteAssets.inline_css` config: CSS added to frontend pages while remote URLs are active.
+  Defaults to `img[width="0"][height="0"] { width: auto; height: auto; }` so remote images
+  without local dimensions stay visible. Set to `''` to disable.
+
 ## [1.1.0] - 2026-11-09
 
 ### Added

@@ -3,13 +3,16 @@
 namespace Dpws\RemoteAssets\Tests;
 
 use Dpws\RemoteAssets\RemoteAssets;
+use Dpws\RemoteAssets\RemoteAssetsControllerExtension;
 use PHPUnit\Framework\TestCase;
+use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Kernel;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\View\Requirements;
 
 /**
  * Plain PHPUnit test so no database is needed (SapphireTest always clears a temp database on teardown).
@@ -42,6 +45,8 @@ class RemoteAssetsTest extends TestCase
     protected function tearDown(): void
     {
         Environment::setEnv(RemoteAssets::ENV_VAR, $this->originalEnv ?? '');
+        $this->setCliOverride(null);
+        Requirements::clear();
         Injector::inst()->get(Kernel::class)->setEnvironment($this->originalEnvironment);
         Config::unnest();
         parent::tearDown();
@@ -118,5 +123,53 @@ class RemoteAssetsTest extends TestCase
 
         $this->assertTrue(RemoteAssets::isEnabled());
         $this->assertFalse(RemoteAssets::isActiveForRequest());
+    }
+
+    public function testInlineCSSAddedByDefault(): void
+    {
+        Environment::setEnv(RemoteAssets::ENV_VAR, 'https://example.com');
+        $this->setCliOverride(false);
+
+        $this->assertSame(
+            ['remote-assets' => 'img[width="0"][height="0"] { width: auto; height: auto; }'],
+            $this->getInlineCSSAfterInit()
+        );
+    }
+
+    public function testInlineCSSCanBeDisabled(): void
+    {
+        Environment::setEnv(RemoteAssets::ENV_VAR, 'https://example.com');
+        $this->setCliOverride(false);
+        RemoteAssets::config()->set('inline_css', '');
+
+        $this->assertSame([], $this->getInlineCSSAfterInit());
+    }
+
+    public function testInlineCSSNotAddedInCli(): void
+    {
+        Environment::setEnv(RemoteAssets::ENV_VAR, 'https://example.com');
+
+        $this->assertSame([], $this->getInlineCSSAfterInit());
+    }
+
+    private function getInlineCSSAfterInit(): array
+    {
+        Requirements::clear();
+        Controller::add_extension(RemoteAssetsControllerExtension::class);
+        Controller::create()->extend('onAfterInit');
+
+        return Requirements::backend()->getCustomCSS();
+    }
+
+    /**
+     * Simulates a web request; Environment has no public setter for this.
+     */
+    private function setCliOverride(?bool $isCli): void
+    {
+        if (!property_exists(Environment::class, 'isCliOverride')) {
+            $this->markTestSkipped('Environment::$isCliOverride is not available in this framework version');
+        }
+
+        (new \ReflectionProperty(Environment::class, 'isCliOverride'))->setValue(null, $isCli);
     }
 }

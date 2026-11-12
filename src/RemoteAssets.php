@@ -24,6 +24,12 @@ class RemoteAssets
     private static string $proxy_route = '_remote-assets';
 
     /**
+     * CSS added to frontend pages while remote URLs are active. Set to '' to disable.
+     * Remote images have no local file to read dimensions from, so templates output width="0" height="0".
+     */
+    private static string $inline_css = 'img[width="0"][height="0"] { width: auto; height: auto; }';
+
+    /**
      * Never enabled outside dev, even if the classes are wired up manually.
      */
     public static function isEnabled(): bool

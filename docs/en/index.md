@@ -7,6 +7,7 @@
 | `Dpws\RemoteAssets\RemoteAssets` | Reads `REMOTE_ASSETS`, decides if remote URLs apply to the current request, builds URLs |
 | `Dpws\RemoteAssets\RemoteAssetStore` | Replaces `FlysystemAssetStore` via Injector; overrides `exists()`, `getAsURL()`, `getMimeType()`, `getMetadata()` |
 | `Dpws\RemoteAssets\RemoteAssetsMiddleware` | Answers `/{proxy_route}/{path}` by fetching the file from the remote with basic auth |
+| `Dpws\RemoteAssets\RemoteAssetsControllerExtension` | Adds `RemoteAssets.inline_css` via `Requirements::customCSS()` in `Controller::onAfterInit()` when remote URLs are active |
 
 ## Why overriding `exists()` is enough for variants
 

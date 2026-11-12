@@ -14,3 +14,6 @@ SilverStripe\Core\Injector\Injector:
     properties:
       Middlewares:
         RemoteAssetsMiddleware: '%$Dpws\RemoteAssets\RemoteAssetsMiddleware'
+SilverStripe\Control\Controller:
+  extensions:
+    - Dpws\RemoteAssets\RemoteAssetsControllerExtension

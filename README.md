@@ -66,16 +66,36 @@ weren't installed.
 ```yaml
 Dpws\RemoteAssets\RemoteAssets:
   proxy_route: '_remote-assets'
+  # CSS added to frontend pages while remote URLs are active; '' disables it
+  inline_css: 'img[width="0"][height="0"] { width: auto; height: auto; }'
 
 Dpws\RemoteAssets\RemoteAssetsMiddleware:
   timeout: 15          # seconds to wait for the remote
   cache_max_age: 86400 # browser cache for proxied files, in seconds
 ```
 
+### Inline CSS
+
+Remote images have no local file to read dimensions from, so templates render them with
+`width="0" height="0"` and some browsers show nothing. By default the module adds this CSS
+to the `<head>` of frontend pages (via `Requirements::customCSS()`) while remote URLs are active:
+
+```css
+img[width="0"][height="0"] { width: auto; height: auto; }
+```
+
+Replace it with your own rules, or turn it off with an empty string:
+
+```yaml
+Dpws\RemoteAssets\RemoteAssets:
+  inline_css: ''
+```
+
 ## Limitations
 
 - **The variant must already exist on the remote.** A size or format the remote never rendered returns 404.
 - **`$Width` / `$Height` return `0`** for remote images, because dimensions are read from the file.
+  The default [inline CSS](#inline-css) keeps such images visible.
 - **Protected (draft) files** are not supported — they aren't publicly reachable on the remote.
 - Partial caches (`<% cached %>`) may hold old URLs after toggling the variable; flush to clear them.
 
